@@ -168,18 +168,44 @@
       opacity: .4;
     }
 
-    /* large decorative letter */
+    /* large futuristic decorative image */
     .hero-deco {
-      font-family: var(--ff-display);
-      font-style: italic;
-      font-size: clamp(7rem, 14vw, 13rem);
-      line-height: 1;
-      color: transparent;
-      -webkit-text-stroke: 1.5px color-mix(in srgb, var(--accent) 25%, transparent);
+      width: clamp(220px, 30vw, 260px);
+      height: clamp(220px, 30vw, 260px);
+      border-radius: 999px;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(34,211,238,.7), transparent 55%),
+        radial-gradient(circle at 80% 80%, rgba(248,113,113,.5), transparent 55%),
+        radial-gradient(circle at 50% 120%, rgba(15,23,42,1), transparent 70%),
+        linear-gradient(145deg, #020617, #020014);
+      box-shadow:
+        0 0 40px rgba(34,211,238,.55),
+        inset 0 0 22px rgba(15,23,42,.9);
+      position: relative;
+      overflow: hidden;
       user-select: none;
       pointer-events: none;
-      letter-spacing: -.04em;
       align-self: center;
+    }
+
+    .hero-deco::before,
+    .hero-deco::after {
+      content: '';
+      position: absolute;
+      inset: 16%;
+      border-radius: 50%;
+      border: 1px solid rgba(148,163,184,.4);
+      box-shadow:
+        0 0 24px rgba(34,211,238,.5),
+        0 0 2px rgba(148,163,184,.6);
+    }
+
+    .hero-deco::after {
+      inset: 34%;
+      border-style: dashed;
+      border-width: 1px;
+      border-color: rgba(56,189,248,.7);
+      box-shadow: none;
     }
 
     .hero-tag {
@@ -560,7 +586,7 @@
         </span>
       </div>
     </div>
-    <div class="hero-deco" aria-hidden="true">DE</div>
+    <div class="hero-deco" aria-hidden="true"></div>
   </header>
 
   <!-- ── Content ──────────────────────────────────────────────── -->
