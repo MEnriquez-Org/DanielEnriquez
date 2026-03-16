@@ -153,6 +153,44 @@
 
     .theme-toggle:hover { color: var(--accent); background: var(--panel2); }
 
+    .variants {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--panel);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .variants-label {
+      font-size: .75rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--subtle);
+    }
+
+    .variants a {
+      font-family: var(--ff-body);
+      font-size: .86rem;
+      font-weight: 600;
+      text-decoration: none;
+      color: var(--muted);
+      padding: 5px 10px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      transition: color .2s, background .2s, border-color .2s;
+    }
+
+    .variants a:hover,
+    .variants a.active {
+      color: var(--accent);
+      background: var(--panel2);
+      border-color: var(--border);
+    }
+
     /* ── Hero ────────────────────────────────────────────────── */
     .hero {
       position: relative;
@@ -476,6 +514,13 @@
         <li><a href="#skills">Skills</a></li>
       </ul>
 
+      <div class="variants" aria-label="Theme variants">
+        <span class="variants-label">Variants</span>
+        <a class="variant-link" href="index.html">Classic</a>
+        <a class="variant-link" href="indexViolets.html">Violets</a>
+        <a class="variant-link" href="indexTron.html">Tron</a>
+      </div>
+
       <button id="themeBtn" class="theme-toggle" type="button" aria-label="Toggle dark mode">
         <svg id="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
@@ -759,6 +804,13 @@
         { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
       );
       document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+      /* ── Variant active state ── */
+      const path = (window.location.pathname || '').split('/').pop() || 'index.html';
+      document.querySelectorAll('.variant-link').forEach(a => {
+        const href = (a.getAttribute('href') || '').split('/').pop();
+        a.classList.toggle('active', href === path);
+      });
     })();
   </script>
 </body>
