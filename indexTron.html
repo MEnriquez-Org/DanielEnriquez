@@ -1,0 +1,871 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Daniel Enriquez</title>
+  <style>
+    /* ── Design tokens ───────────────────────────────────────── */
+    :root {
+      /* Tron-inspired light theme (still dark-ish) */
+      --bg:          #020818;
+      --bg2:         #020617;
+      --panel:       #020b24;
+      --panel2:      #031529;
+      --text:        #e5f4ff;
+      --muted:       #7ca0c9;
+      --subtle:      #4b5c7a;
+      --accent:      #22d3ee;   /* neon cyan */
+      --accent-lt:   #38e8ff;
+      --accent-glow: rgba(34,211,238,.24);
+      --rose:        #f472b6;   /* magenta highlight */
+      --rose-bg:     rgba(244,114,182,.14);
+      --gold:        #facc15;   /* amber highlight */
+      --gold-bg:     rgba(250,204,21,.14);
+      --sky:         #38bdf8;   /* neon blue */
+      --sky-bg:      rgba(56,189,248,.14);
+      --teal-soft:   #0f172a;
+      --border:      #1e293b;
+      --shadow-sm:   0 0 20px rgba(15,118,178,.45);
+      --shadow-md:   0 0 40px rgba(56,189,248,.45);
+      --shadow-lg:   0 0 70px rgba(34,211,238,.55);
+      --nav-h:       62px;
+      --ff-display:  system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+      --ff-body:     system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+    }
+
+    [data-theme="dark"] {
+      /* Even deeper grid-like dark */
+      --bg:          #00010d;
+      --bg2:         #020017;
+      --panel:       #02051b;
+      --panel2:      #020921;
+      --text:        #e5f4ff;
+      --muted:       #7ca0c9;
+      --subtle:      #4b5c7a;
+      --accent:      #22d3ee;
+      --accent-lt:   #38e8ff;
+      --accent-glow: rgba(34,211,238,.35);
+      --rose:        #fb7185;
+      --rose-bg:     rgba(251,113,133,.16);
+      --gold:        #facc15;
+      --gold-bg:     rgba(250,204,21,.16);
+      --sky:         #60a5fa;
+      --sky-bg:      rgba(96,165,250,.16);
+      --teal-soft:   #020617;
+      --border:      #1f2937;
+      --shadow-sm:   0 0 18px rgba(37,99,235,.65);
+      --shadow-md:   0 0 40px rgba(22,163,235,.7);
+      --shadow-lg:   0 0 80px rgba(34,211,238,.8);
+    }
+
+    /* ── Reset ───────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--ff-body);
+      font-weight: 400;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      transition: background .3s, color .3s;
+      overflow-x: hidden;
+    }
+
+    /* ── Layout ──────────────────────────────────────────────── */
+    .wrap { width: min(1060px, 92vw); margin-inline: auto; }
+
+    /* ── Nav ─────────────────────────────────────────────────── */
+    .nav-bar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      height: var(--nav-h);
+      display: flex;
+      align-items: center;
+      background: color-mix(in srgb, var(--bg) 80%, transparent);
+      backdrop-filter: blur(20px) saturate(1.8);
+      -webkit-backdrop-filter: blur(20px) saturate(1.8);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-inner {
+      width: min(1060px, 92vw);
+      margin-inline: auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .nav-logo {
+      font-family: var(--ff-display);
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--accent);
+      letter-spacing: -.04em;
+      user-select: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: .86rem;
+      font-weight: 500;
+      text-decoration: none;
+      color: var(--muted);
+      padding: 6px 13px;
+      border-radius: 8px;
+      transition: color .2s, background .2s;
+      letter-spacing: .01em;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: var(--accent);
+      background: var(--panel2);
+    }
+
+    .theme-toggle {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--panel);
+      color: var(--muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color .2s, background .2s;
+      flex-shrink: 0;
+    }
+    .theme-toggle:hover { color: var(--accent); background: var(--panel2); }
+
+    /* ── Hero ────────────────────────────────────────────────── */
+    .hero {
+      padding: 80px 0 64px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 40px;
+      align-items: end;
+      position: relative;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, var(--accent), transparent 70%);
+      opacity: .4;
+    }
+
+    /* large futuristic decorative image — holographic chip */
+    .hero-deco {
+      width: clamp(260px, 32vw, 300px);
+      height: clamp(200px, 26vw, 230px);
+      border-radius: 24px;
+      background:
+        radial-gradient(circle at 10% 0%, rgba(56,189,248,0.35), transparent 60%),
+        radial-gradient(circle at 100% 100%, rgba(244,114,182,0.35), transparent 65%),
+        linear-gradient(135deg, #020617 0%, #020b2b 40%, #020617 80%);
+      box-shadow:
+        0 0 40px rgba(34,211,238,.65),
+        0 0 80px rgba(34,211,238,.55),
+        inset 0 0 40px rgba(15,23,42,.95);
+      position: relative;
+      overflow: hidden;
+      user-select: none;
+      pointer-events: none;
+      align-self: center;
+    }
+
+    /* outer neon frame */
+    .hero-deco::before {
+      content: '';
+      position: absolute;
+      inset: 10%;
+      border-radius: 18px;
+      border: 1px solid rgba(34,211,238,.9);
+      box-shadow:
+        0 0 24px rgba(34,211,238,.55),
+        0 0 3px rgba(56,189,248,.8);
+    }
+
+    /* inner circuit grid */
+    .hero-deco::after {
+      content: '';
+      position: absolute;
+      inset: 18%;
+      border-radius: 14px;
+      background-image:
+        linear-gradient(90deg, rgba(15,23,42,0.0) 0, rgba(15,23,42,0.8) 40%, rgba(15,23,42,0.0) 80%),
+        linear-gradient(0deg,
+          transparent 0 46%,
+          rgba(34,211,238,0.85) 47% 53%,
+          transparent 54% 100%
+        ),
+        linear-gradient(90deg,
+          transparent 0 46%,
+          rgba(34,211,238,0.7) 47% 53%,
+          transparent 54% 100%
+        );
+      background-size:
+        260% 100%,
+        14px 14px,
+        14px 14px;
+      background-position:
+        0 0,
+        0 0,
+        0 0;
+      background-repeat: no-repeat, repeat, repeat;
+      opacity: 0.85;
+      animation: tron-sweep 6s linear infinite;
+    }
+
+    @keyframes tron-sweep {
+      0%   { background-position: -160% 0, 0 0, 0 0; }
+      50%  { background-position:  160% 0, 0 0, 0 0; }
+      100% { background-position: -160% 0, 0 0, 0 0; }
+    }
+
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: .78rem;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 18px;
+    }
+
+    .hero-tag span {
+      display: block;
+      width: 24px;
+      height: 1.5px;
+      background: var(--accent);
+      border-radius: 2px;
+    }
+
+    h1 {
+      font-family: var(--ff-display);
+      font-size: clamp(2.8rem, 5.5vw, 4.6rem);
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -.04em;
+      color: var(--text);
+      margin-bottom: 16px;
+    }
+
+    h1 em {
+      font-style: normal;
+      color: var(--accent);
+    }
+
+    .hero-desc {
+      max-width: 520px;
+      font-size: 1.05rem;
+      color: var(--muted);
+      margin-bottom: 32px;
+      line-height: 1.7;
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: .88rem;
+      color: var(--muted);
+    }
+
+    .meta-item svg {
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    /* ── Main ────────────────────────────────────────────────── */
+    main { padding-bottom: 100px; }
+
+    /* ── Section ─────────────────────────────────────────────── */
+    .section {
+      margin-top: 64px;
+      scroll-margin-top: 76px;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+      margin-bottom: 28px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-num {
+      font-family: var(--ff-display);
+      font-style: normal;
+      font-weight: 700;
+      font-size: .9rem;
+      color: var(--accent);
+      opacity: .55;
+      letter-spacing: .04em;
+      user-select: none;
+    }
+
+    .section-title {
+      font-family: var(--ff-display);
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -.04em;
+      color: var(--text);
+    }
+
+    /* ── Card ────────────────────────────────────────────────── */
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px 28px;
+      box-shadow: var(--shadow-sm);
+      transition: box-shadow .3s ease, transform .3s ease;
+      position: relative;
+    }
+
+    .card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-3px);
+    }
+
+    .card + .card { margin-top: 16px; }
+
+    /* top edge highlight */
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 20px;
+      right: 20px;
+      height: 2px;
+      border-radius: 0 0 4px 4px;
+      background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent), var(--sky) 50%), transparent);
+      opacity: .55;
+    }
+
+    .card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 6px;
+    }
+
+    .card-title {
+      font-family: var(--ff-display);
+      font-size: 1.02rem;
+      font-weight: 700;
+      letter-spacing: -.025em;
+      line-height: 1.35;
+      color: var(--text);
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 11px;
+      border-radius: 999px;
+      font-size: .76rem;
+      font-weight: 600;
+      letter-spacing: .02em;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .tag-gold   { background: var(--gold-bg);  color: var(--gold);  border: 1px solid color-mix(in srgb, var(--gold) 22%, transparent); }
+    .tag-teal   { background: var(--panel2);   color: var(--accent);border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent); }
+    .tag-rose   { background: var(--rose-bg);  color: var(--rose);  border: 1px solid color-mix(in srgb, var(--rose) 22%, transparent); }
+    .tag-sky    { background: var(--sky-bg);   color: var(--sky);   border: 1px solid color-mix(in srgb, var(--sky) 22%, transparent); }
+
+    .tag::before {
+      content: '';
+      display: block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .tag-rose::before { animation: pulse 1.8s infinite; }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: .5; transform: scale(.7); }
+    }
+
+    .card-org {
+      font-size: .9rem;
+      font-weight: 500;
+      color: var(--accent);
+      margin-bottom: 14px;
+    }
+
+    .card-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+
+    .card-list li {
+      display: flex;
+      gap: 12px;
+      font-size: .93rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .card-list li::before {
+      content: '—';
+      color: var(--accent);
+      opacity: .5;
+      flex-shrink: 0;
+      font-size: .85rem;
+      margin-top: .05em;
+    }
+
+    /* ── Skills ──────────────────────────────────────────────── */
+    .skills-wrap {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+      gap: 16px;
+    }
+
+    .skill-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px 22px;
+      box-shadow: var(--shadow-sm);
+      transition: box-shadow .3s, transform .3s;
+    }
+
+    .skill-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-3px);
+    }
+
+    .skill-card-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .skill-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .si-teal  { background: var(--panel2);  color: var(--accent); }
+    .si-sky   { background: var(--sky-bg);  color: var(--sky); }
+    .si-gold  { background: var(--gold-bg); color: var(--gold); }
+    .si-rose  { background: var(--rose-bg); color: var(--rose); }
+
+    .skill-label {
+      font-size: .75rem;
+      font-weight: 600;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+      color: var(--subtle);
+    }
+
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+
+    .chip {
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: .82rem;
+      font-weight: 500;
+    }
+
+    .chip-teal { background: var(--panel2);  color: var(--accent); border: 1px solid color-mix(in srgb, var(--accent) 18%, transparent); }
+    .chip-sky  { background: var(--sky-bg);  color: var(--sky);    border: 1px solid color-mix(in srgb, var(--sky) 18%, transparent); }
+    .chip-gold { background: var(--gold-bg); color: var(--gold);   border: 1px solid color-mix(in srgb, var(--gold) 18%, transparent); }
+    .chip-rose { background: var(--rose-bg); color: var(--rose);   border: 1px solid color-mix(in srgb, var(--rose) 18%, transparent); }
+
+    /* ── Reveal ──────────────────────────────────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity .6s ease, transform .6s ease;
+    }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    /* ── Footer ──────────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 36px 0 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .footer-name {
+      font-family: var(--ff-display);
+      font-size: 1.05rem;
+      font-weight: 800;
+      letter-spacing: -.03em;
+      color: var(--text);
+    }
+
+    .footer-right {
+      font-size: .85rem;
+      color: var(--subtle);
+    }
+
+    /* ── Mobile ──────────────────────────────────────────────── */
+    @media (max-width: 760px) {
+      .hero { grid-template-columns: 1fr; }
+      .hero-deco { display: none; }
+      .nav-links { display: none; }
+      .skills-wrap { grid-template-columns: 1fr 1fr; }
+      h1 { font-size: 2.6rem; }
+    }
+
+    @media (max-width: 480px) {
+      .skills-wrap { grid-template-columns: 1fr; }
+      .card { padding: 18px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Nav ──────────────────────────────────────────────────── -->
+  <nav class="nav-bar">
+    <div class="nav-inner">
+      <span class="nav-logo">Daniel Enriquez</span>
+
+      <ul class="nav-links" role="list">
+        <li><a href="#education">Education</a></li>
+        <li><a href="#experience">Experience</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#research">Research</a></li>
+        <li><a href="#skills">Skills</a></li>
+      </ul>
+
+      <button id="themeBtn" class="theme-toggle" type="button" aria-label="Toggle dark mode">
+        <svg id="icon-sun" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/>
+          <line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/>
+          <line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+        </svg>
+        <svg id="icon-moon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ── Hero ─────────────────────────────────────────────────── -->
+  <header class="hero wrap">
+    <div class="hero-left">
+      <p class="hero-tag"><span></span>Computer Science &amp; Machine Learning</p>
+      <h1>Daniel<br><em>Enriquez</em></h1>
+      <p class="hero-desc">
+        B.S. in Computer Science (Minor: Mathematics) at NYU Tandon School of Engineering.
+        Focused on efficient ML, self-supervised representation learning, and model compression.
+      </p>
+      <div class="hero-meta">
+        <span class="meta-item">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Brooklyn, NY
+        </span>
+        <span class="meta-item">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          dee4002@nyu.edu
+        </span>
+        <span class="meta-item">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Expected Spring 2027
+        </span>
+      </div>
+    </div>
+    <div class="hero-deco" aria-hidden="true"></div>
+  </header>
+
+  <!-- ── Content ──────────────────────────────────────────────── -->
+  <main class="wrap">
+
+    <!-- Education ──────────────────── -->
+    <div id="education" class="section">
+      <div class="section-head">
+        <span class="section-num">01</span>
+        <h2 class="section-title">Education</h2>
+      </div>
+
+      <article class="card reveal">
+        <div class="card-head">
+          <p class="card-title">New York University — Tandon School of Engineering</p>
+          <span class="tag tag-gold">Fall 2023 – Spring 2027</span>
+        </div>
+        <p class="card-org">B.S. in Computer Science &nbsp;&middot;&nbsp; Minor in Mathematics</p>
+        <ul class="card-list">
+          <li>Coursework: Linear Algebra and Differential Equations, Calculus III, Applied Analysis, Design and Analysis of Algorithms, Computational Cognitive Science, Introduction to Machine Learning.</li>
+          <li>Graduate coursework: Algorithmic Machine Learning and Data Science, Engineering Applications of Deep Learning, Efficient AI and Hardware Accelerator Design, Machine Learning Systems Engineering and Operations.</li>
+        </ul>
+      </article>
+    </div>
+
+    <!-- Experience ─────────────────── -->
+    <div id="experience" class="section">
+      <div class="section-head">
+        <span class="section-num">02</span>
+        <h2 class="section-title">Experience</h2>
+      </div>
+
+      <article class="card reveal">
+        <div class="card-head">
+          <p class="card-title">Course Assistant — Introduction to Machine Learning (CS-UY 4563)</p>
+          <span class="tag tag-rose">Jan 2026 – Present</span>
+        </div>
+        <p class="card-org">NYU Tandon School of Engineering &nbsp;&middot;&nbsp; Brooklyn, NY</p>
+        <ul class="card-list">
+          <li>Support instruction for a 75-student undergraduate ML course through grading, answer key refinement, EdStem support, office hours, and review sessions.</li>
+          <li>Contributed assessment materials: one problem set and several exam questions covering supervised learning and neural networks.</li>
+          <li>Created review slides and provided technical feedback on regression, SVMs, neural networks, transformers, and gradient-based optimization — emphasizing mathematical reasoning and code connections.</li>
+        </ul>
+      </article>
+
+      <article class="card reveal">
+        <div class="card-head">
+          <p class="card-title">Research Intern</p>
+          <span class="tag tag-gold">Jun 2025 – Aug 2025</span>
+        </div>
+        <p class="card-org">Terreform ONE &nbsp;&middot;&nbsp; New York, NY</p>
+        <ul class="card-list">
+          <li>Developed early-stage concepts for AI-assisted urban mobility security systems, including camera-equipped bike lock designs shaped by cost, sensing, and embedded deployment constraints.</li>
+          <li>Investigated edge-versus-cloud tradeoffs for low-cost intelligent devices under memory, power, and form-factor limits — directly motivating interest in model compression and efficient ML.</li>
+          <li>Prepared and presented product concepts and technical tradeoffs to collaborators and external stakeholders including 10xBeta.</li>
+        </ul>
+      </article>
+
+      <article class="card reveal">
+        <div class="card-head">
+          <p class="card-title">Crew Member</p>
+          <span class="tag tag-teal">Sept 2021 – Jan 2023</span>
+        </div>
+        <p class="card-org">Chipotle Mexican Grill &nbsp;&middot;&nbsp; Sammamish, WA</p>
+        <ul class="card-list">
+          <li>Worked in a fast-paced team environment while balancing academic responsibilities.</li>
+        </ul>
+      </article>
+    </div>
+
+    <!-- Projects ───────────────────── -->
+    <div id="projects" class="section">
+      <div class="section-head">
+        <span class="section-num">03</span>
+        <h2 class="section-title">Projects</h2>
+      </div>
+
+      <article class="card reveal">
+        <div class="card-head">
+          <p class="card-title">MaJEPA: Self-Supervised Audio Representation Learning</p>
+          <span class="tag tag-gold">Sep 2025 – Dec 2025</span>
+        </div>
+        <ul class="card-list">
+          <li>Designed and trained a masked JEPA for piano audio on a subset of MAESTRO v3.0.0 using log-mel spectrogram windows, a ViT-based encoder, EMA teacher–student training, and predictive masking in PyTorch.</li>
+          <li>Built checkpoint-based evaluation pipelines measuring temporal consistency, isotropy proxies, participation ratio, and intra-/inter-piece geometry across 10k–100k training steps.</li>
+          <li>Trained to 100k steps on a single NVIDIA T4 GPU (~9 hours); produced a report analyzing temporal sharpening, increasing isotropy, effective dimensionality, and reduced piece-level separation.</li>
+        </ul>
+      </article>
+
+      <article class="card reveal">
+        <div class="card-head">
+          <p class="card-title">Low-Rank Compression for Vision-Language Models</p>
+          <span class="tag tag-rose">Feb 2026 – Present</span>
+        </div>
+        <ul class="card-list">
+          <li>Investigate latency-aware rank allocation strategies for low-rank compression of vision-language models, motivated by recent QSVD and WSVD methods.</li>
+          <li>Develop an experimental framework to study how per-layer rank budgets affect quality, compression behavior, and measured inference efficiency.</li>
+          <li>Focus on deployment-relevant tradeoffs — especially cases where parameter reduction does not translate directly into wall-clock speedup.</li>
+        </ul>
+      </article>
+    </div>
+
+    <!-- Research ───────────────────── -->
+    <div id="research" class="section">
+      <div class="section-head">
+        <span class="section-num">04</span>
+        <h2 class="section-title">Research Activities</h2>
+      </div>
+
+      <article class="card reveal">
+        <div class="card-head">
+          <p class="card-title">Participant, EMERGE Lab Reading Group</p>
+          <span class="tag tag-teal">Sep 2025 – Dec 2025</span>
+        </div>
+        <p class="card-org">NYU Tandon School of Engineering &nbsp;&middot;&nbsp; Brooklyn, NY</p>
+        <ul class="card-list">
+          <li>Participated in weekly discussions on recent work in multi-agent reinforcement learning, autonomy, and simulation-based evaluation.</li>
+          <li>Read and discussed papers on self-play, planning, safety, and learned decision-making systems.</li>
+        </ul>
+      </article>
+    </div>
+
+    <!-- Skills ─────────────────────── -->
+    <div id="skills" class="section">
+      <div class="section-head">
+        <span class="section-num">05</span>
+        <h2 class="section-title">Technical Skills</h2>
+      </div>
+
+      <div class="skills-wrap reveal">
+        <div class="skill-card">
+          <div class="skill-card-head">
+            <div class="skill-icon si-teal">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            </div>
+            <p class="skill-label">Languages &amp; Libraries</p>
+          </div>
+          <div class="chips">
+            <span class="chip chip-teal">Python</span>
+            <span class="chip chip-teal">PyTorch</span>
+            <span class="chip chip-teal">NumPy</span>
+            <span class="chip chip-teal">scikit-learn</span>
+            <span class="chip chip-teal">OpenCV</span>
+            <span class="chip chip-teal">matplotlib</span>
+          </div>
+        </div>
+
+        <div class="skill-card">
+          <div class="skill-card-head">
+            <div class="skill-icon si-sky">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.663 17h4.673M12 3v1m6.364 1.636-.707.707M21 12h-1M4 12H3m3.343-5.657-.707-.707m2.828 9.9a5 5 0 1 1 7.072 0l-.548.547A3.374 3.374 0 0 0 14 18.469V19a2 2 0 1 1-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+            </div>
+            <p class="skill-label">ML Areas</p>
+          </div>
+          <div class="chips">
+            <span class="chip chip-sky">Self-supervised Learning</span>
+            <span class="chip chip-sky">Representation Learning</span>
+            <span class="chip chip-sky">Transformers</span>
+            <span class="chip chip-sky">Model Compression</span>
+            <span class="chip chip-sky">Audio Repr. Learning</span>
+          </div>
+        </div>
+
+        <div class="skill-card">
+          <div class="skill-card-head">
+            <div class="skill-icon si-rose">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            </div>
+            <p class="skill-label">Systems &amp; Tools</p>
+          </div>
+          <div class="chips">
+            <span class="chip chip-rose">Linux</span>
+            <span class="chip chip-rose">Git</span>
+            <span class="chip chip-rose">Docker</span>
+            <span class="chip chip-rose">GPU Workflows</span>
+            <span class="chip chip-rose">Experiment Tracking</span>
+            <span class="chip chip-rose">Checkpointing</span>
+            <span class="chip chip-rose">LaTeX</span>
+          </div>
+        </div>
+
+        <div class="skill-card">
+          <div class="skill-card-head">
+            <div class="skill-icon si-gold">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            </div>
+            <p class="skill-label">Mathematics</p>
+          </div>
+          <div class="chips">
+            <span class="chip chip-gold">Linear Algebra</span>
+            <span class="chip chip-gold">Probability</span>
+            <span class="chip chip-gold">Convex Optimization</span>
+            <span class="chip chip-gold">High-dim Geometry</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ── Footer ───────────────────────────────────────────────── -->
+  <footer class="wrap">
+    <p class="footer-name">Daniel Enriquez</p>
+    <p class="footer-right">dee4002@nyu.edu &nbsp;&middot;&nbsp; NYU Tandon &nbsp;&middot;&nbsp; Brooklyn, NY</p>
+  </footer>
+
+  <!-- ── JS ───────────────────────────────────────────────────── -->
+  <script>
+    (function () {
+      const root = document.documentElement;
+      const btn  = document.getElementById('themeBtn');
+      const sun  = document.getElementById('icon-sun');
+      const moon = document.getElementById('icon-moon');
+
+      function applyTheme(t) {
+        root.setAttribute('data-theme', t);
+        sun.style.display  = t === 'dark' ? 'none' : '';
+        moon.style.display = t === 'dark' ? ''     : 'none';
+        localStorage.setItem('theme', t);
+      }
+
+      applyTheme(
+        localStorage.getItem('theme') ||
+        (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+      );
+
+      btn.addEventListener('click', () =>
+        applyTheme(root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark')
+      );
+
+      /* active nav */
+      const links    = Array.from(document.querySelectorAll('.nav-links a'));
+      const sections = links.map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+
+      function updateNav() {
+        const y = window.scrollY + 88;
+        let cur = sections[0].id;
+        sections.forEach(s => { if (s.offsetTop <= y) cur = s.id; });
+        links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + cur));
+      }
+      window.addEventListener('scroll', updateNav, { passive: true });
+      updateNav();
+
+      /* scroll reveal */
+      const io = new IntersectionObserver(
+        entries => entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } }),
+        { threshold: 0.08, rootMargin: '0px 0px -36px 0px' }
+      );
+      document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+    })();
+  </script>
+</body>
+</html>
