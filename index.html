@@ -273,6 +273,29 @@
       color: var(--text);
     }
 
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 12px;
+    }
+
+    .skill-card {
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--panel);
+      padding: 14px 14px 12px;
+      box-shadow: var(--shadow);
+    }
+
+    .skill-title {
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin: 0 0 8px;
+      font-weight: 700;
+    }
+
     footer {
       color: var(--muted);
       text-align: center;
@@ -448,29 +471,52 @@
 
     <section id="skills">
       <h2>Technical Skills</h2>
-      <div class="chips">
-        <span class="chip">Python</span>
-        <span class="chip">PyTorch</span>
-        <span class="chip">NumPy</span>
-        <span class="chip">scikit-learn</span>
-        <span class="chip">OpenCV</span>
-        <span class="chip">matplotlib</span>
-        <span class="chip">Self-supervised Learning</span>
-        <span class="chip">Representation Learning</span>
-        <span class="chip">Transformers</span>
-        <span class="chip">Model Compression</span>
-        <span class="chip">Audio Representation Learning</span>
-        <span class="chip">Linux</span>
-        <span class="chip">Git</span>
-        <span class="chip">Docker</span>
-        <span class="chip">GPU Training Workflows</span>
-        <span class="chip">Experiment Tracking</span>
-        <span class="chip">Checkpointing</span>
-        <span class="chip">LaTeX</span>
-        <span class="chip">Linear Algebra</span>
-        <span class="chip">Probability</span>
-        <span class="chip">Convex Optimization Concepts</span>
-        <span class="chip">High-dimensional Geometry</span>
+      <div class="skills-grid">
+        <article class="skill-card">
+          <h3 class="skill-title">Languages &amp; Libraries</h3>
+          <div class="chips">
+            <span class="chip">Python</span>
+            <span class="chip">PyTorch</span>
+            <span class="chip">NumPy</span>
+            <span class="chip">scikit-learn</span>
+            <span class="chip">OpenCV</span>
+            <span class="chip">matplotlib</span>
+          </div>
+        </article>
+
+        <article class="skill-card">
+          <h3 class="skill-title">ML Areas</h3>
+          <div class="chips">
+            <span class="chip">Self-supervised Learning</span>
+            <span class="chip">Representation Learning</span>
+            <span class="chip">Transformers</span>
+            <span class="chip">Model Compression</span>
+            <span class="chip">Audio Representation Learning</span>
+          </div>
+        </article>
+
+        <article class="skill-card">
+          <h3 class="skill-title">Systems &amp; Tools</h3>
+          <div class="chips">
+            <span class="chip">Linux</span>
+            <span class="chip">Git</span>
+            <span class="chip">Docker</span>
+            <span class="chip">GPU Training Workflows</span>
+            <span class="chip">Experiment Tracking</span>
+            <span class="chip">Checkpointing</span>
+            <span class="chip">LaTeX</span>
+          </div>
+        </article>
+
+        <article class="skill-card">
+          <h3 class="skill-title">Mathematics</h3>
+          <div class="chips">
+            <span class="chip">Linear Algebra</span>
+            <span class="chip">Probability</span>
+            <span class="chip">Convex Optimization Concepts</span>
+            <span class="chip">High-dimensional Geometry</span>
+          </div>
+        </article>
       </div>
     </section>
   </main>
